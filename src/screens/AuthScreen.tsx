@@ -70,6 +70,8 @@ export const AuthScreen = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         navigation.replace('Home');
+        dispatch(setEmail(''));
+        dispatch(setPassword(''));
       }
     });
 
