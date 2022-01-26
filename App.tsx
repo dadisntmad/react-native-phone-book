@@ -1,6 +1,7 @@
 import { StyleSheet, SafeAreaView } from 'react-native';
 import { AuthScreen } from './src/screens/AuthScreen';
 import { HomeScreen } from './src/screens/HomeScreen';
+import { ModalScreen } from './src/screens/ModalScreen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import store from './src/app/store';
@@ -19,6 +20,13 @@ export default function App() {
             <Stack.Navigator>
               <Stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
               <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+              <Stack.Group screenOptions={{ presentation: 'modal' }}>
+                <Stack.Screen
+                  name="Modal"
+                  component={ModalScreen}
+                  options={{ headerShown: false }}
+                />
+              </Stack.Group>
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import { SearchBar } from '../components/SearchBar/SearchBar';
+import { Employees } from '../components/Employees/Employees';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { signOut } from 'firebase/auth';
@@ -8,7 +9,6 @@ import { auth } from '../../firebase';
 import { RootStackParamList } from '../types/navigation';
 
 import { Icon } from 'react-native-elements';
-import { Employees } from '../components/Employees/Employees';
 
 export const HomeScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -33,12 +33,16 @@ export const HomeScreen = () => {
       },
     ]);
 
+  const onOpenModal = () => {
+    navigation.navigate('Modal');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>{auth.currentUser?.email}</Text>
         <View style={styles.iconsContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onOpenModal}>
             <Icon
               type="antdesign"
               name="plus"
