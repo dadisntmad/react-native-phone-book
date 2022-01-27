@@ -84,6 +84,7 @@ export const ModalScreen = () => {
             placeholder="Phone number"
             value={phoneNumber}
             onChangeText={(text) => dispatch(setPhoneNumber(text))}
+            keyboardType="numeric"
           />
           <TextInput
             style={styles.textInput}
