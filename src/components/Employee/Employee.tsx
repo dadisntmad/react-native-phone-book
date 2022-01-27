@@ -1,8 +1,11 @@
 import React from 'react';
-import { View, Text, Animated } from 'react-native';
+import { View, Text, Animated, TouchableOpacity } from 'react-native';
 import { Employees } from '../../types/employeesSlice';
 
 import { Swipeable, TouchableOpacity as OuterTouchable } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types/navigation';
 
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
@@ -16,6 +19,17 @@ type EmployeeProps = {
 };
 
 export const Employee = ({ employee }: EmployeeProps) => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  const onNavigateToDetailed = () => {
+    navigation.navigate('EmployeeDetailed', {
+      fullName: employee.fullName,
+      phoneNumber: employee.phoneNumber,
+      email: employee.email,
+      position: employee.position,
+    });
+  };
+
   const rightSwipe = (
     progress: Animated.AnimatedInterpolation,
     dragX: Animated.AnimatedInterpolation,
@@ -50,9 +64,11 @@ export const Employee = ({ employee }: EmployeeProps) => {
 
   return (
     <Swipeable renderRightActions={rightSwipe}>
-      <View style={styles.container}>
-        <Text style={styles.text}>{employee.fullName}</Text>
-      </View>
+      <TouchableOpacity onPress={onNavigateToDetailed}>
+        <View style={styles.container}>
+          <Text style={styles.text}>{employee.fullName}</Text>
+        </View>
+      </TouchableOpacity>
     </Swipeable>
   );
 };
