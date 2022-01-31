@@ -13,16 +13,25 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  selectEditMode,
+  selectEmployee,
   selectEmployeeEmail,
   selectFullName,
   selectPhoneNumber,
   selectPosition,
 } from '../selectors/selectors';
-import { setEmail, setFullName, setPhoneNumber, setPosition } from '../features/employeesSlice';
-import { addDoc, collection } from 'firebase/firestore';
+import {
+  setEditMode,
+  setEmail,
+  setFullName,
+  setPhoneNumber,
+  setPosition,
+} from '../features/employeesSlice';
+import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebase';
 
 import add from '../../assets/images/add.png';
+import edit from '../../assets/images/edit.png';
 
 import { Icon } from 'react-native-elements';
 
@@ -32,6 +41,8 @@ export const ModalScreen = () => {
   const phoneNumber = useSelector(selectPhoneNumber);
   const email = useSelector(selectEmployeeEmail);
   const position = useSelector(selectPosition);
+  const editMode = useSelector(selectEditMode);
+  const selectedEmployee = useSelector(selectEmployee);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const currentUser = auth.currentUser?.uid;
 
@@ -58,6 +69,27 @@ export const ModalScreen = () => {
     dispatch(setPosition(''));
   };
 
+  const onSaveEditedEmployee = async () => {
+    const employeeRef = doc(db, 'employees', selectedEmployee);
+
+    try {
+      await updateDoc(employeeRef, {
+        fullName,
+        phoneNumber,
+        email,
+        position,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    onNavigateBack();
+    dispatch(setEditMode(false));
+    dispatch(setFullName(''));
+    dispatch(setPhoneNumber(''));
+    dispatch(setEmail(''));
+    dispatch(setPosition(''));
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.buttonBack} onPress={onNavigateBack}>
@@ -69,41 +101,79 @@ export const ModalScreen = () => {
           tvParallaxProperties={undefined}
         />
       </TouchableOpacity>
-      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={75}>
-        <Image style={styles.image} source={add} />
-        <Text style={styles.title}>Add an employee</Text>
-        <View style={styles.formContainer}>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Full name"
-            value={fullName}
-            onChangeText={(text) => dispatch(setFullName(text))}
-          />
-          <TextInput
-            style={styles.textInput}
-            placeholder="Phone number"
-            value={phoneNumber}
-            onChangeText={(text) => dispatch(setPhoneNumber(text))}
-            keyboardType="numeric"
-          />
-          <TextInput
-            style={styles.textInput}
-            placeholder="Email"
-            value={email}
-            onChangeText={(text) => dispatch(setEmail(text))}
-            keyboardType="email-address"
-          />
-          <TextInput
-            style={styles.textInput}
-            placeholder="Position"
-            value={position}
-            onChangeText={(text) => dispatch(setPosition(text))}
-          />
-          <TouchableOpacity style={styles.addButton} onPress={onCloseModal}>
-            <Text style={styles.textButton}>Add</Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
+      {editMode ? (
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={75}>
+          <Image style={styles.image} source={edit} />
+          <Text style={styles.title}>Edit an employee</Text>
+          <View style={styles.formContainer}>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Full name"
+              value={fullName}
+              onChangeText={(text) => dispatch(setFullName(text))}
+            />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Phone number"
+              value={phoneNumber}
+              onChangeText={(text) => dispatch(setPhoneNumber(text))}
+              keyboardType="numeric"
+            />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Email"
+              value={email}
+              onChangeText={(text) => dispatch(setEmail(text))}
+              keyboardType="email-address"
+            />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Position"
+              value={position}
+              onChangeText={(text) => dispatch(setPosition(text))}
+            />
+            <TouchableOpacity style={styles.addButton} onPress={onSaveEditedEmployee}>
+              <Text style={styles.textButton}>Update</Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      ) : (
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={75}>
+          <Image style={styles.image} source={add} />
+          <Text style={styles.title}>Add an employee</Text>
+          <View style={styles.formContainer}>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Full name"
+              value={fullName}
+              onChangeText={(text) => dispatch(setFullName(text))}
+            />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Phone number"
+              value={phoneNumber}
+              onChangeText={(text) => dispatch(setPhoneNumber(text))}
+              keyboardType="numeric"
+            />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Email"
+              value={email}
+              onChangeText={(text) => dispatch(setEmail(text))}
+              keyboardType="email-address"
+            />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Position"
+              value={position}
+              onChangeText={(text) => dispatch(setPosition(text))}
+            />
+            <TouchableOpacity style={styles.addButton} onPress={onCloseModal}>
+              <Text style={styles.textButton}>Add</Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      )}
     </View>
   );
 };

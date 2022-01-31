@@ -7,6 +7,15 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types/navigation';
 
+import {
+  setEditMode,
+  setEmail,
+  setEmployee,
+  setFullName,
+  setPhoneNumber,
+  setPosition,
+} from '../../features/employeesSlice';
+import { useDispatch } from 'react-redux';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
 
@@ -19,6 +28,7 @@ type EmployeeProps = {
 };
 
 export const Employee = ({ employee }: EmployeeProps) => {
+  const dispatch = useDispatch();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const onNavigateToDetailed = () => {
@@ -28,6 +38,16 @@ export const Employee = ({ employee }: EmployeeProps) => {
       email: employee.email,
       position: employee.position,
     });
+  };
+
+  const onUpdateValues = () => {
+    dispatch(setEditMode(true));
+    navigation.navigate('Modal');
+    dispatch(setEmployee(employee.id));
+    dispatch(setFullName(employee.fullName));
+    dispatch(setPhoneNumber(employee.phoneNumber));
+    dispatch(setEmail(employee.email));
+    dispatch(setPosition(employee.position));
   };
 
   const rightSwipe = (
@@ -64,7 +84,7 @@ export const Employee = ({ employee }: EmployeeProps) => {
 
   return (
     <Swipeable renderRightActions={rightSwipe}>
-      <TouchableOpacity onPress={onNavigateToDetailed}>
+      <TouchableOpacity onPress={onNavigateToDetailed} onLongPress={onUpdateValues}>
         <View style={styles.container}>
           <Text style={styles.text}>{employee.fullName}</Text>
         </View>

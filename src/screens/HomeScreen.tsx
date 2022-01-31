@@ -7,10 +7,13 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../firebase';
 import { RootStackParamList } from '../types/navigation';
+import { useSelector } from 'react-redux';
+import { selectEmployees } from '../selectors/selectors';
 
 import { Icon } from 'react-native-elements';
 
 export const HomeScreen = () => {
+  const employees = useSelector(selectEmployees);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const onSignOut = () =>
@@ -63,6 +66,9 @@ export const HomeScreen = () => {
         </View>
       </View>
       <SearchBar />
+      {employees.length > 0 && (
+        <Text style={styles.quantity}>Number of employees: {employees.length}</Text>
+      )}
       <Employees />
     </View>
   );
@@ -88,5 +94,9 @@ const styles = StyleSheet.create({
   },
   signOutButton: {
     marginLeft: 10,
+  },
+  quantity: {
+    color: 'gray',
+    marginBottom: 20,
   },
 });

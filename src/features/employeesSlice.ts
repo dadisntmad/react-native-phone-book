@@ -8,6 +8,8 @@ const initialState: EmployeesSliceState = {
   phoneNumber: '',
   email: '',
   position: '',
+  editMode: false,
+  selectedEmployee: '',
 };
 
 const employeesSlice = createSlice({
@@ -32,10 +34,24 @@ const employeesSlice = createSlice({
     setPosition: (state, action: PayloadAction<string>) => {
       state.position = action.payload;
     },
+    setEditMode: (state, action: PayloadAction<boolean>) => {
+      state.editMode = action.payload;
+    },
+    setEmployee: (state, action: PayloadAction<string>) => {
+      state.selectedEmployee = action.payload;
+    },
   },
 });
 
-export const { setSearchValue, setEmployees, setFullName, setPhoneNumber, setEmail, setPosition } =
-  employeesSlice.actions;
+export const {
+  setSearchValue,
+  setEmployees,
+  setFullName,
+  setPhoneNumber,
+  setEmail,
+  setPosition,
+  setEditMode,
+  setEmployee,
+} = employeesSlice.actions;
 
 export default employeesSlice.reducer;

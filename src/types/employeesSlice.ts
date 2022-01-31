@@ -5,6 +5,8 @@ export type EmployeesSliceState = {
   phoneNumber: string;
   email: string;
   position: string;
+  editMode: boolean;
+  selectedEmployee: string;
 };
 
 export type Employees = {
